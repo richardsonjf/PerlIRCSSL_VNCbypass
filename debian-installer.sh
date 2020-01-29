@@ -5,7 +5,7 @@
  	echo "Please keep this code PRIVATE!!!";
  	read -p "Install required packages? Y or LEAVE BLANK + ENTER" choice
  	case $choice in
- 	Y) sudo apt update && sudo apt install perl pkg-perl-tools libssl-dev -y && sudo cpan -fi Net::SSLeay IO::Socket::SSL Time::HiRes Mojolicious Mojo::IRC;;  
+ 	Y) sudo apt update && sudo apt install perl pkg-perl-tools libssl-dev masscan -y && sudo cpan -fi Net::SSLeay IO::Socket::SSL Time::HiRes Mojolicious Mojo::IRC;;  
  	esac
  	cp ./perlircssl.pl perlircssl.pl.bak;
  	if read -p "IRC server:port? " name; then

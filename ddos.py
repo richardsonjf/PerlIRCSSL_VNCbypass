@@ -32,12 +32,14 @@ def run2():
 			s.connect((ip,port))
 			s.send(data)
 			for x in range(times):
+		
 				s.send(data)
-				print(i +" Sent!!!")
+
 			
 		except:
+		
 			s.close()
-		print("[!] Error!!!")
+
 
 for y in range(threads):
 	if choice == 'y':

